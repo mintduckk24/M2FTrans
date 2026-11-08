@@ -1,0 +1,37 @@
+## M2FTrans Configuration for MyoPS380 Benchmark
+## Strictly adheres to Promt_train_test_no_val.txt
+
+model_id:         m2ftrans
+architecture:     m2ftrans_2d
+num_classes:      4
+img_size:         128
+basic_dims:       16
+num_modals:       3
+modalities:       ['bSSFP', 'LGE', 'T2w']
+
+# Benchmark Protocols
+protocol_id:      myops380_train304_test76_last_v1
+metric_protocol:  myops380_voxel_v3
+
+# Training Budget & Optimizer
+epochs:           300
+batch_size:       16
+accum_steps:      1
+lr:               0.0003333
+weight_decay:     0.0001
+seed:             1234
+no_val:           true
+power:            0.9
+amp:              auto
+
+# Label Semantics
+source_label_order:         legacy
+internal_label_order:       canonical
+native_output_label_order:  canonical
+exported_label_order:       canonical
+
+# Data Paths
+path_to_data:     'D:/nckh_model/Dataset/MyoPS380/Processed_data'
+path_to_splits:   'D:/nckh_model/M2FTrans/dataset/splits/myops380_no_val'
+path_to_ckpts:    'D:/nckh_model/M2FTrans/checkpoints'
+path_to_output:   'D:/nckh_model/M2FTrans/test_predictions'

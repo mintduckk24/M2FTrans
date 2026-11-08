@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ipynb_checkpoints/
+checkpoints/*.pt
+test_predictions/
+*.zip
+.vscode/
+.idea/
