@@ -27,28 +27,38 @@ def resolve_split_dir(candidate: str | Path | None = None) -> Path:
 
 
 def resolve_data_root(candidate: str | Path | None = None) -> Path:
-    """Resolves dataset root containing bSSFP, LGE, T2w directories."""
+    """Resolves dataset root containing bSSFP, LGE, T2w with train_npz / test_vol_h5."""
     if candidate and str(candidate).strip():
         p = Path(candidate)
         if p.is_dir():
+            # If directly pointing to a folder containing bSSFP with train_npz
+            if (p / "bSSFP" / "train_npz").is_dir():
+                return p
+            # If candidate has Processed_data subfolder
+            if (p / "Processed_data" / "bSSFP" / "train_npz").is_dir():
+                return p / "Processed_data"
+            # If candidate was mistakenly pointing to Raw_data, check sibling Processed_data
+            if p.name == "Raw_data" and (p.parent / "Processed_data" / "bSSFP" / "train_npz").is_dir():
+                return p.parent / "Processed_data"
             if (p / "bSSFP").is_dir():
                 return p
-            if (p / "Processed_data" / "bSSFP").is_dir():
-                return p / "Processed_data"
 
     search_dirs = [
         Path(r"D:\nckh_model\Dataset\MyoPS380\Processed_data"),
         Path(r"D:\nckh_model\Dataset\MyoPS380"),
-        Path(r"../Dataset/MyoPS380/Processed_data"),
+        Path(r"/content/M2FTrans/MyoPS380_dataset/Processed_data"),
+        Path(r"/content/drive/MyDrive/MyoPS380_dataset/Processed_data"),
+        Path(r"/content/drive/MyDrive/Processed_data"),
         Path(r"/content/Dataset/MyoPS380/Processed_data"),
         Path(r"/content/MyoPS380_dataset/Processed_data"),
         Path(r"/content/MyoPS380_dataset"),
+        Path(r"../Dataset/MyoPS380/Processed_data"),
     ]
     for d in search_dirs:
         if d.is_dir():
-            if (d / "bSSFP").is_dir():
+            if (d / "bSSFP" / "train_npz").is_dir():
                 return d
-            if (d / "Processed_data" / "bSSFP").is_dir():
+            if (d / "Processed_data" / "bSSFP" / "train_npz").is_dir():
                 return d / "Processed_data"
 
     return Path(r"D:\nckh_model\Dataset\MyoPS380\Processed_data")

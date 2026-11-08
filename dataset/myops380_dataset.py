@@ -131,7 +131,18 @@ class MyoPS380TrainDataset(Dataset):
                 "All 304 non-test patients are included in train.txt. Validation loaders and loops must not be created."
             )
 
-        self.data_root = Path(data_dir)
+        p_data = Path(data_dir)
+        if (p_data / "Processed_data" / "bSSFP" / "train_npz").is_dir():
+            p_data = p_data / "Processed_data"
+        elif p_data.name == "Raw_data" and (p_data.parent / "Processed_data" / "bSSFP" / "train_npz").is_dir():
+            p_data = p_data.parent / "Processed_data"
+        elif not (p_data / "bSSFP" / "train_npz").is_dir():
+            for cand in [p_data / "Processed_data", p_data.parent / "Processed_data"]:
+                if (cand / "bSSFP" / "train_npz").is_dir():
+                    p_data = cand
+                    break
+
+        self.data_root = p_data
         self.split_path = resolved_split_path
         self.img_size = (img_size, img_size) if isinstance(img_size, int) else tuple(img_size)
 
@@ -246,7 +257,18 @@ class MyoPS380TestVolumeDataset(Dataset):
         if "data_root" in kwargs and kwargs["data_root"] is not None:
             data_dir = kwargs["data_root"]
 
-        self.data_root = Path(data_dir)
+        p_data = Path(data_dir)
+        if (p_data / "Processed_data" / "bSSFP" / "test_vol_h5").is_dir():
+            p_data = p_data / "Processed_data"
+        elif p_data.name == "Raw_data" and (p_data.parent / "Processed_data" / "bSSFP" / "test_vol_h5").is_dir():
+            p_data = p_data.parent / "Processed_data"
+        elif not (p_data / "bSSFP" / "test_vol_h5").is_dir():
+            for cand in [p_data / "Processed_data", p_data.parent / "Processed_data"]:
+                if (cand / "bSSFP" / "test_vol_h5").is_dir():
+                    p_data = cand
+                    break
+
+        self.data_root = p_data
         self.split_path = Path(split_dir) / split_file if Path(split_dir).is_dir() else Path(split_dir)
         self.cases = read_split_names(self.split_path)
 

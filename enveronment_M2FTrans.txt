@@ -132,14 +132,18 @@ else
         cp -r "$DOWNLOAD_DIR/Processed_data" "$TARGET_DATASET_DIR/"
     fi
 
-    # Cơ chế tự động định vị thư mục dữ liệu chuẩn (thư mục chứa bSSFP, LGE, T2w)
-    FOUND_BSSFP=$(find "$TARGET_DATASET_DIR" "$DOWNLOAD_DIR" -type d -name "bSSFP" 2>/dev/null | head -n 1)
-    if [ -n "$FOUND_BSSFP" ]; then
-        LOCAL_DATASET=$(dirname "$FOUND_BSSFP")
-        echo "✅ Đã xác định thư mục dataset chuẩn tại: $LOCAL_DATASET"
+    # Cơ chế tự động định vị thư mục Processed_data chuẩn (chứa bSSFP/train_npz, tránh nhầm sang Raw_data)
+    FOUND_TRAIN_NPZ=$(find "$TARGET_DATASET_DIR" "$DOWNLOAD_DIR" /content -type d -name "train_npz" 2>/dev/null | grep -i "bSSFP" | head -n 1)
+    if [ -n "$FOUND_TRAIN_NPZ" ]; then
+        LOCAL_DATASET=$(dirname $(dirname "$FOUND_TRAIN_NPZ"))
+        echo "✅ Đã xác định thư mục Processed_data chuẩn tại: $LOCAL_DATASET"
+    elif [ -d "$TARGET_DATASET_DIR/Processed_data/bSSFP" ]; then
+        LOCAL_DATASET="$TARGET_DATASET_DIR/Processed_data"
+    elif [ -d "$DOWNLOAD_DIR/Processed_data/bSSFP" ]; then
+        LOCAL_DATASET="$DOWNLOAD_DIR/Processed_data"
     else
         LOCAL_DATASET="/content/M2FTrans/MyoPS380_dataset/Processed_data"
-        echo "⚠️ Chưa phát hiện thư mục bSSFP, đặt mặc định: $LOCAL_DATASET"
+        echo "⚠️ Đặt đường dẫn mặc định: $LOCAL_DATASET"
     fi
 fi
 
