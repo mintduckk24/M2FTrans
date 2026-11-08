@@ -42,7 +42,8 @@ if not os.path.exists('/content/drive/MyDrive'):
 " || true
 
 echo "=== [3/7] Thiết lập Repository M2FTrans ==="
-# Kiểm tra nếu đang đứng sẵn trong thư mục M2FTrans
+REPO_URL="https://github.com/mintduckk24/M2FTrans.git"
+
 if [ -f "./train.py" ] && [ -d "./models" ]; then
     echo "✅ Đang đứng trực tiếp trong thư mục M2FTrans."
 elif [ -d "/content/M2FTrans" ]; then
@@ -57,9 +58,12 @@ elif [ -d "/content/drive/MyDrive/M2FTrans" ]; then
     echo "✅ Phát hiện thư mục M2FTrans trên Google Drive. Đang sao chép vào /content/M2FTrans..."
     cp -r "/content/drive/MyDrive/M2FTrans" /content/M2FTrans
 else
-    echo "⚠️ Chưa tìm thấy thư mục M2FTrans trên Colab hoặc Google Drive."
-    echo "👉 Hãy kéo thả file 'M2FTrans.zip' (hoặc thư mục 'M2FTrans') từ máy tính vào khung Explorer của VS Code (/content/) rồi chạy lại script!"
-    exit 1
+    echo "Đang clone repository từ $REPO_URL..."
+    git clone "$REPO_URL" /content/M2FTrans || {
+        echo "❌ Chưa thể clone từ $REPO_URL."
+        echo "👉 Bạn có thể kéo thả file M2FTrans.zip vào khung Explorer của VS Code (/content/) rồi chạy lại."
+        exit 1
+    }
 fi
 
 if [ -d "/content/M2FTrans" ]; then
